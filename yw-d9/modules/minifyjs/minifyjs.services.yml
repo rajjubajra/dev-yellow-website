@@ -1,0 +1,4 @@
+services:
+  minifyjs:
+    class: Drupal\minifyjs\MinifyJs
+    arguments: ['@path.matcher', '@file.mime_type.guesser', '@file.usage', '@file_system']

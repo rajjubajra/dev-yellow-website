@@ -1,0 +1,29 @@
+<IfModule mod_rewrite.c>
+Options -MultiViews
+RewriteEngine On
+RewriteBase /
+RewriteRule ^index\.html$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-l
+RewriteRule ^ index.html [QSA,L]
+#RewriteRule . /index.html [L]
+</IfModule>
+
+
+
+
+
+
+#Options -MultiViews
+#RewriteEngine On
+#RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteRule ^ index.html [QSA,L]
+
+
+
+#RewriteEngine on
+#RewriteCond %{HTTP_HOST} ^rdbajra.com$ [NC,OR]
+#RewriteCond %{HTTP_HOST} ^www.rdbajra.com$
+#RewriteCond %{REQUEST_URI} !d9-base/
+#RewriteRule (.*) /d9-base/$1 [L]

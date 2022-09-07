@@ -1,0 +1,67 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the Minify JS module.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function minifyjs_schema() {
+  $schema['minifyjs_file'] = [
+    'description' => 'Store a list of all javascript files and their minified status.',
+    'fields' => [
+      'fid' => [
+        'description' => 'The file id of the javascript file.',
+        'not null' => TRUE,
+        'type' => 'serial',
+        'unsigned' => TRUE,
+      ],
+      'uri' => [
+        'description' => 'Original file uri.',
+        'length' => 191,
+        'not null' => TRUE,
+        'type' => 'varchar',
+      ],
+      'size' => [
+        'description' => 'Original file size.',
+        'not null' => TRUE,
+        'type' => 'int',
+        'unsigned' => TRUE,
+      ],
+      'modified' => [
+        'description' => 'Original file last modified date.',
+        'not null' => TRUE,
+        'type' => 'int',
+        'unsigned' => TRUE,
+      ],
+      'minified_uri' => [
+        'default' => '',
+        'description' => 'Minified file uri.',
+        'length' => 255,
+        'type' => 'varchar',
+      ],
+      'minified_size' => [
+        'default' => 0,
+        'description' => 'Minified file size.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+      ],
+      'minified_modified' => [
+        'default' => 0,
+        'description' => 'Minified file last modified date.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+      ],
+    ],
+    'unique keys' => [
+      'uri' => ['uri'],
+    ],
+    'primary key' => [
+      'fid',
+    ],
+  ];
+
+  return $schema;
+}

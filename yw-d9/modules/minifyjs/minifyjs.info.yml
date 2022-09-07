@@ -1,0 +1,15 @@
+name: Minify JS
+description: Allows an administrator to minify any javascript file in Drupal and use that version rather than the original.
+package: Performance and scalability
+type: module
+core: 8.x
+
+core_version_requirement: ^8 || ^9
+configure: minifyjs.config
+
+dependencies:
+  - drupal:file
+# Information added by Drupal.org packaging script on 2020-06-24
+version: '8.x-2.2'
+project: 'minifyjs'
+datestamp: 1593007535

@@ -1,0 +1,163 @@
+<?php
+
+/**
+ * @file
+ * Provides integration with Intersection Observer API.
+ */
+
+use Drupal\Core\Url;
+use Drupal\Core\Block\BlockPluginInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Template\Attribute;
+use Drupal\block\BlockInterface;
+
+/**
+ * Provides a convenient shortcut for procedural hooks.
+ *
+ * @return class
+ *   The Intersection Observer manager class instance.
+ */
+function io() {
+  static $manager;
+
+  if (!isset($manager)) {
+    $manager = \Drupal::service('io.manager');
+  }
+
+  return $manager;
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function io_preprocess_block(&$variables) {
+  if (isset($variables['elements']['#io'])) {
+    io()->preprocessBlock($variables);
+  }
+}
+
+/**
+ * Implements hook_block_view_alter().
+ */
+function io_block_view_alter(array &$build, BlockPluginInterface $block_plugin) {
+  // Adds IO identifier for template_preprocess_block() fast check. Fast as we
+  // don't (re-)load the block entity at runtime just to get the UUID.
+  // Not all block has the getThirdPartySetting, somebody must deviate.
+  if (!empty($build['#block']) && method_exists($build['#block'], 'getThirdPartySetting') && $build['#block']->getThirdPartySetting('io', 'lazyload')) {
+    $build['#io'] = $build['#block']->uuid();
+    $build['#attached']['drupalSettings']['io']['block'] = io()->getIoSettings('block');
+    $build['#attached']['library'][] = 'io/block';
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function io_form_block_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if (io()->currentUser()->hasPermission('administer blocks')) {
+    io()->blockFormAlter($form, $form_state, $form_id);
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave().
+ */
+function io_block_presave(BlockInterface $block) {
+  if (empty($block->getThirdPartySetting('io', 'lazyload')) || !io()->isBlockApplicable($block)) {
+    $block->unsetThirdPartySetting('io', 'lazyload');
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function io_form_blazy_settings_form_alter(array &$form, $form_state) {
+  io()->blazySettingsFormAlter($form);
+}
+
+/**
+ * Implements hook_config_schema_info_alter().
+ */
+function io_config_schema_info_alter(array &$definitions) {
+  if (isset($definitions['blazy.settings'])) {
+    $definitions['blazy.settings']['mapping']['extras']['mapping']['io_fallback']['type'] = 'string';
+  }
+}
+
+/**
+ * Implements hook_preprocess_io_pager().
+ */
+function io_preprocess_io_pager(&$variables) {
+  /** @var \Drupal\Core\Pager\PagerManagerInterface $pager_manager */
+  $pager_manager = \Drupal::service('pager.manager');
+
+  $element = $variables['element'];
+  $parameters = $variables['parameters'];
+
+  // Nothing to do if there is only one page.
+  $pager = $pager_manager->getPager($element);
+  if (!$pager) {
+    return;
+  }
+
+  $current = $pager->getCurrentPage();
+  $total = $pager->getTotalPages();
+
+  // Calculate various markers within this pager piece:
+  if ($current < ($total - 1)) {
+    $options = [
+      'query' => $pager_manager->getUpdatedParameters($parameters, $element, $current + 1),
+    ];
+    $variables['items']['next']['href'] = Url::fromRoute('<current>', [], $options)->toString();
+    $variables['items']['next']['attributes'] = new Attribute();
+  }
+
+  $variables['#cache']['contexts'][] = 'url.query_args';
+
+  if (!\Drupal::service('module_handler')->moduleExists('ajaxin') && !empty($variables['options']['autoload'])) {
+    $variables['content_attributes']['class'][] = 'is-b-loading';
+  }
+}
+
+/**
+ * Overrides template_preprocess_views_view().
+ */
+function io_preprocess_views_view(&$variables) {
+  if (io()->isIoPager($variables['view'])) {
+    $plugin_id = $variables['view']->getStyle()->getPluginId();
+    if (!empty($variables['rows'])) {
+      if (!in_array($plugin_id, ['html_list', 'table'])) {
+        if (!isset($variables['rows']['#theme_wrappers'])) {
+          $variables['rows']['#theme_wrappers'][] = 'container';
+        }
+        $variables['rows']['#attributes']['data-io-pager'] = TRUE;
+      }
+    }
+
+    // Ensures the library is loaded regardless of rows empty, or not.
+    $variables['attributes']['data-io-view'] = $plugin_id;
+    $variables['#attached']['library'][] = 'io/pager';
+    $variables['#attached']['drupalSettings']['io']['pager'] = io()->getIoSettings('pager');
+  }
+}
+
+/**
+ * Overrides template_preprocess_views_view_list().
+ */
+function io_preprocess_views_view_list(&$variables) {
+  if (io()->isIoPager($variables['view']) && !empty($variables['rows'])) {
+    $variables['list']['attributes'] = empty($variables['list']['attributes']) ? new Attribute() : $variables['list']['attributes'];
+    $variables['list']['attributes']['data-io-pager'] = TRUE;
+  }
+}
+
+/**
+ * Implements hook_help().
+ */
+function io_help($route_name) {
+  if ($route_name == 'help.page.io') {
+    $output = file_get_contents(dirname(__FILE__) . '/README.md');
+    return function_exists('blazy_parse_markdown') ? blazy_parse_markdown($output) : '<pre>' . $output . '</pre>';
+  }
+  return '';
+}

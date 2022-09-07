@@ -1,0 +1,21 @@
+{
+  // This file extends .eslintrc at drupal root.
+  // Located at /modules/contrib/io, run:
+  // eslint . -o ../../eslint/io.html -f html
+  "extends": "../../../core/.eslintrc.legacy.json",
+  "globals": {
+    "once": true,
+    "Ajaxin": true,
+    "Promise": true,
+    "Blazy": true,
+    "dBlazy": true,
+    "Bio": true
+  },
+  "rules": {
+    "consistent-this": [0, "me"],
+    "max-params": 0,
+    "id-length": [1, {"min": 1}],
+    // Warnings.
+    "max-nested-callbacks": [1, 4]
+  }
+}

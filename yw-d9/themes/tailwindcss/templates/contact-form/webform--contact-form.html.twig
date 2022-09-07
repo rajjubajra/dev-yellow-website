@@ -1,0 +1,36 @@
+
+
+  
+<form{{ attributes.removeClass().addClass('grid md:grid-cols-4') }}>
+  {{ title_prefix }}
+  {{ children }}
+  {{ title_suffix }}
+</form>
+
+{#
+
+<form{{ attributes.addClass('w-full md:w-2/3 lg:1/2 p-8') }}>
+  {{ title_prefix }}
+
+  <div class="md:grid md:grid-cols-2 md:gap-2">
+    <div class="w-full mb-1">{{ element.elements.name }}</div>
+    <div class="w-full mb-1">{{ element.elements.email }}</div>
+  </div>
+  <div>
+    {{ element.elements.message }}
+  </div>
+  <div class="font-thin">
+    {{ element.form_build_id }}
+    {{ element.form_id }}
+    {{ element.actions }}
+  </div>
+  
+
+</form>
+
+
+{{  vardumper(element) }}
+
+
+#}
+

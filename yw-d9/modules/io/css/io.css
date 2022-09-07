@@ -1,0 +1,66 @@
+/**
+ * @file
+ */
+
+/** IO for blocks: sensible height to display the spinner correctly. */
+.block--io {
+  min-height: 22px;
+  position: relative;
+}
+
+.block--io .io__error,
+.block--io .io__loaded {
+  min-height: 1px;
+  transition-delay: 0s;
+}
+
+/** IO for blocks: with ajaxing module integration. */
+.io .ajaxin-wrapper {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 97;
+}
+
+/** AJAX request is hit, hide link to offer loading AJAX manually. */
+/** Do not display: none, need to be clickable in case of error, and show loader.*/
+/*
+.io__lazy .io__text {
+  opacity: 0;
+}
+*/
+
+.io__error[data-io-block-hit] ~ .b-loader {
+  display: none;
+}
+
+/** If the fallback isn't removed after AJAX hit, it means AJAX failed. */
+.io__error[data-io-block-hit] .io__text {
+  opacity: 1;
+}
+
+/** IO pager content wrapper identifier. */
+[data-io-pager] {
+  display: block;
+  min-height: 64px;
+  position: relative;
+  transition: all 0.6s ease-in .2s;
+}
+
+.pager--io ~ .ajaxin-wrapper {
+  margin: 15px auto;
+}
+
+/**
+ * IO pager: intentionally using CSS for easy overrides without touching JS.
+ * Enable to hide. Leave it visible for just in case AJAX error, users can still
+ * load the contents manually. Decide on your own discretion.
+.pager--io--autoload {
+  opacity: 0;
+}
+
+.pager--io--loaded {
+  opacity: 1;
+}
+*/

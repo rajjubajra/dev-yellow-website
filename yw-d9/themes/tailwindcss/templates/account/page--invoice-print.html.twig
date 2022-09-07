@@ -1,0 +1,353 @@
+<div class="container mx-auto px-4">
+
+  <header role="banner">
+    {{ page.header }}
+  </header>
+
+  {#
+  {{ page.primary_menu }}
+  {{ page.secondary_menu }}
+  #}
+
+  
+  {{ page.breadcrumb }}
+
+  {{ page.highlighted }}
+
+  {{ page.help }}
+
+  <main role="main">
+    <div class="w-full min-h-screen">
+
+      {# INVOICE HEADER #}
+      <div>
+        <h1 class="uppercase text-3xl">Yellow-Website.com</h1>
+        <div>Tel: 0203 172 3971 | Mob: 0782 899 1384 Email: design@Yellow-Website.com</div>
+      </div>
+
+      {# INVOICE NUMBER AND DATA #}
+      <div class="mt-5 w-full flex justify-end item-end">
+        <div>
+          <div>Invoice - <span id="invoice-number"></span></div>
+          <div id="invoice-date"></div>
+        </div>
+      </div>
+
+      {# CLIENT'S ADDRESS #}
+      <div class="my-5">
+        Bill To:
+        <ul>
+          <li id="client-name"></li>
+          <li id="address-line-1"></li>
+          <li id="address-line-2"></li>
+          <li id="address-city"></li>
+          <li id="address-postcode"></li>
+        </ul>
+
+        <ul class="my-5">
+          <li>
+              <span id="address-tel"></span> | 
+              <span id="address-email"></span>
+          </li>
+        </ul>
+      </div>
+
+      {# INVOICE DETAILS #}
+      <div class="w-full my-5">
+        <table class="border">
+          <tr class="border-b p-2">
+            <th class="w-80 p-1">Descrition</th>
+            <th class="px-1 border-l border-r">Quantity</th>
+            <th class="px-3 border-r">Rate</th>
+            <th class="px-2 border-r">Amount</th>
+          </tr>
+          <tbody class="border-l border-r border-b" id="invoice-details"></tbody>
+        </table>
+
+        {# TOTAL AMOUNT #}
+        <div class="my-5">
+          <span>Total Amount £</span><span id="total-amount"></span>
+        </div>
+      </div>
+
+
+      {# BANK ACCOUNT DETAILS #}
+      <div id="bank-details"></div>
+      
+
+    </div>
+    
+
+    
+  </main>
+
+  {% if page.footer %}
+    <footer role="contentinfo">
+      {{ page.footer }}
+    </footer>
+  {% endif %}
+
+</div>{# /.layout-container #}
+
+
+
+
+
+<script>
+
+
+window.onload = function(){
+  try{
+      /** GET node Id from URL parameter **/
+      const url_string =  (window.location.href).toLowerCase();
+      const url = new URL(url_string);
+      /** Node Id **/
+      const uuid = url.searchParams.get("nid");
+      //console.log("NODE ID", uuid);
+
+      /** RUN GET INVOICE **/
+      getInvoices(uuid);
+
+  }catch(err){
+    console.log("Error: URL parameter not found or", err );
+  }
+}
+
+
+
+  /** FETCH INVOICE **/
+  const getInvoices = async (uuid) => {
+
+  const url = `/d9-base/jsonapi/node/invoice/${uuid}`;
+
+  const response = await fetch(url, {
+    method: "GET",
+    headers:{
+      Accept: 'application/vnd.api+json'
+    }
+  });
+
+  const invoices = await response.json();
+
+  //console.log("INVOICE LIST",invoices);
+
+  const { data: {attributes, relationships} } = invoices;
+
+  //console.log("ATTR",attributes);
+  //console.log("RELATION",relationships);
+  
+  //console.log(attributes.field_old_invoice_number);
+
+  /** INVOICE NUMBER **/
+  document.getElementById('invoice-number').innerHTML = attributes.field_old_invoice_number;
+  /** INVOICE DATE **/
+  document.getElementById('invoice-date').innerHTML = attributes.field_old_invoice_date;
+
+
+  
+  /** nested array distructuring **/
+  const {data: 
+    {relationships:
+      {field_invoice_details:{links}, 
+        field_client_id_invoice,
+        field_bank_account,
+      }
+    }
+  } = invoices;
+
+  /** INVOICE DETAILS **/
+  getParagraphs(links.related.href)
+
+  /** INVOICE CLIENT ADDRESS  **/
+  getClientDetails(field_client_id_invoice.data.id);
+
+  /** BANK DETAILS **/
+  getBankDetails(field_bank_account.data.id);
+
+
+  
+  }
+
+
+
+  /** FETCH INVOICE DETAILS 
+  * [ description, quantity, rate ] 
+  * from PARAGRAPHS 
+  **/
+  const getParagraphs = async (url) => {
+  
+    const response = await fetch(url, {
+      method: "GET",
+      headers:{
+        Accept: 'application/vnd.api+json'
+      }
+    });
+  
+    const paragraphs = await response.json();
+
+    //console.log("PARA",paragraphs);
+    /** nested array distructuring **/
+
+    const amtArr = [];
+    paragraphs.data.map(item=>{
+      /** nested array distructuring **/
+      const {attributes} = item;
+      let desc = attributes.field_description.value;
+      let qty = attributes.field_quantity;
+      let quantity = qty < 1 ? ' - ' : qty;
+      let rate = qty < 1 ? ' - ' : attributes.field_rate;
+      let amount = qty < 1 ? attributes.field_rate : qty * attributes.field_rate;
+
+      let Items = `<tr>
+        <td class="p-1">${desc}</td>
+        <td class="text-center">${quantity}</td>
+        <td class="text-right pr-1">${rate}</td>
+        <td class="text-right pr-1">${amount}</td>
+      </tr>`;
+
+      /** Total Amount **/
+      amtArr.push(amount);
+      document.getElementById('invoice-details').innerHTML += Items;
+
+    })
+
+    document.getElementById('total-amount').innerHTML = amtArr.reduce((acc, elm)=>{
+      return acc + elm;
+    })
+
+
+  }
+
+
+  /** CLIENT ADDRESS **/
+  const getClientDetails = async (tid) => {
+
+    //console.log("tid", tid);
+
+    url = `/d9-base/jsonapi/node/client_details`;
+
+    const response = await fetch(url,{
+      method: 'GET',
+      headers:{
+          Accept: 'application/vnd.api+json'
+        }
+    })
+    const clientList = await response.json();
+    //console.log("CLIENT LIST",clientList);
+
+    /** FIND taxonomyId 'tid' **/
+    //const {relationships} = clientList.data[0];
+    clientList.data.map(item=>{
+      const {relationships: {field_client_id:{data:{id}}, 
+                              field_client_s_city,
+                              field_client_s_post_code
+                            }
+                            } = item;
+      const {attributes:{
+        field_client_s_name, 
+        field_client_s_email, 
+        field_client_s_tel, 
+        field_client_s_address_line_1, 
+        field_client_s_address_line_2}} = item;
+
+      
+      /** Client Name, Address Line 1, Address line 2 **/
+      if(tid === id){
+        document.getElementById("client-name").innerHTML = field_client_s_name;
+        document.getElementById("address-line-1").innerHTML = field_client_s_address_line_1;
+        document.getElementById("address-line-2").innerHTML = field_client_s_address_line_2;
+
+        document.getElementById("address-tel").innerHTML = field_client_s_tel;
+        document.getElementById("address-email").innerHTML = field_client_s_email; 
+
+        
+        /** Client City Name **/
+        getClientCity(field_client_s_city.data.id);
+        /** Client City Name **/
+        getClientPostCode(field_client_s_post_code.data.id);
+
+      }
+      
+    })
+
+    //const clientTid = relationships.field_client_id.data.id;
+    //console.log("client TID",clientTid);
+   
+    
+  }
+
+  /** CITY NAME **/
+  const getClientCity = async (tid) => {
+
+    //console.log("city tid", tid);
+
+    const url = `/d9-base/jsonapi/taxonomy_term/city_name`;
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Accept: 'application/vid.api+json'
+      }
+    })
+    const cityNames = await response.json();
+    //console.log("city names",cityNames); 
+    cityNames.data.map(item=>{
+      if(item.id === tid){
+        return document.getElementById("address-city").innerHTML = item.attributes.name;
+      }
+    })
+
+  }
+
+  /** POST CODE **/
+  const getClientPostCode = async (tid) => {
+
+    //console.log("city tid", tid);
+
+    const url = `/d9-base/jsonapi/taxonomy_term/post_code`;
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Accept: 'application/vid.api+json'
+      }
+    })
+    const postcodes = await response.json();
+    //console.log("city names", postcodes); 
+    postcodes.data.map(item=>{
+      if(item.id === tid){
+        return document.getElementById("address-postcode").innerHTML = item.attributes.name;
+      }
+    })
+
+  }
+
+
+
+  /** BANK ACCOUNT DETAILS **/
+  const getBankDetails = async (tid) => {
+
+    //console.log(tid);
+
+    const url = `/d9-base/jsonapi/node/bank_account_details`;
+
+    const response = await fetch(url,{
+      method: 'GET',
+      headers:{
+        Accept: 'application/vnd.api+json'
+      }
+    })
+    const bankDetail = await response.json();
+
+    //console.log("Bank Details",bankDetail);
+    bankDetail.data.map(item=>{
+      const {relationships:{field_bank_account_id_invoice:{data:{id}}}} = item;
+      const {attributes:{field_bank_account_details:{value}}} = item;
+      if(tid === id){
+        document.getElementById("bank-details").innerHTML = value;
+      }
+    })
+
+  }
+
+</script>

@@ -1,0 +1,10 @@
+minifyjs.config:
+  title: MinifyJS settings
+  description: Settings for the Minify JS module.
+  route_name: minifyjs.config
+  parent: system.admin_config_development
+minifyjs.manage:
+  title: Manage Javascript Files
+  description: Settings for the Minify JS module.
+  route_name: minifyjs.manage
+  parent: system.performance_settings

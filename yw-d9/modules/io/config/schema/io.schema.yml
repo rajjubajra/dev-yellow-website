@@ -1,0 +1,24 @@
+views.pager.io:
+  type: views_pager_sql
+  label: Intersection Observer pager
+  mapping:
+    io:
+      type: mapping
+      mapping:
+        autoload:
+          type: boolean
+          label: Automatically load content
+        button_text:
+          type: label
+          label: Button text
+        end_text:
+          type: label
+          label: Button text
+
+block.block.*.third_party.io:
+  type: mapping
+  label: Intersection Observer block third party settings
+  mapping:
+    lazyload:
+      type: boolean
+      label: Lazyload using Intersection Observer

@@ -1,0 +1,36 @@
+
+Intersection Observer 8.x-1.0-dev, 2022-02-08
+---------------------------------------------
+- Updated to Blazy 2.7.
+- Removed core/once, only compatible with D9.2+.
+- Downgraded Drupal min requirements till D10 rules the entire world.
+
+Intersection Observer 8.x-1.0-dev, 2021-12-16
+---------------------------------------------
+- Added Drupal ^10 to track potential disruption.
+- Issue #3254666 by gausarts: Update to use vanilla JS once aka broken at 9.3.
+
+Intersection Observer 8.x-1.0-dev, 2021-04-14
+---------------------------------------------
+- Issue #3208729 by gausarts: Support static site ala Tome for ajaxified Views
+  infinite pager.
+
+Intersection Observer 8.x-1.0-dev, 2019-06-30
+---------------------------------------------
+- Fixed for D9 broken views ajax pager.
+
+Intersection Observer 8.x-1.0-dev, 2019-06-24
+---------------------------------------------
+- Updated to D9.
+
+Intersection Observer 8.x-1.0-dev, 2019-04-29
+---------------------------------------------
+- Simplified IO block route, and link markups, leftover from previous approach.
+
+Intersection Observer 8.x-1.0-dev, 2019-04-28
+---------------------------------------------
+- Optimized block checking without re-loading the block entity at runtime.
+
+Intersection Observer 8.x-1.0-dev, 2019-04-06
+---------------------------------------------
+- Initial commit.

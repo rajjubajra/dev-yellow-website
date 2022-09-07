@@ -1,0 +1,44 @@
+{#
+ /**
+  * @file
+  * Default theme implementation for a views io-pager.
+  *
+  * Available variables:
+  * - items: List of pager items.
+  *
+  * @see template_preprocess_io_pager()
+  *
+  * @ingroup themeable
+  */
+#}
+{%
+  set classes = [
+    'pager',
+    'pager--io',
+    options.autoload ? 'pager--io--autoload',
+  ]
+%}
+{%
+  set content_classes = [
+    'pager__items',
+    'js-pager__items',
+  ]
+%}
+{% if items.next or options.end_text %}
+<nav role="navigation" aria-labelledby="pagination-heading"{{ attributes.addClass(classes)|without('role', 'aria-labelledby') }}>
+  <h4 class="visually-hidden">{{ 'Pagination'|t }}</h4>
+  {% if items.next %}
+    <ul{{ content_attributes.addClass(content_classes) }}>
+      <li class="pager__item">
+        <a class="btn btn-primary is-io-pager-trigger" href="{{ items.next.href }}" title="{{ 'Go to next page'|t }}"  rel="next" data-io-pager-trigger{{ items.next.attributes|without('class', 'href', 'title', 'rel') }}>{{ options.button_text|t }}</a>
+      </li>
+    </ul>
+  {% else %}
+    {% if options.end_text is not empty %}
+      <div class="pager__items pager__items--end">
+        {{ options.end_text|t }}
+      </div>
+    {% endif %}
+  {% endif %}
+</nav>
+{% endif %}

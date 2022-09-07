@@ -1,0 +1,5 @@
+RewriteEngine on
+RewriteCond %{HTTP_HOST} ^dev.yellow-website.com$ [NC,OR]
+RewriteCond %{HTTP_HOST} ^www.dev.yellow-website.com$
+RewriteCond %{REQUEST_URI} !yw-01/
+RewriteRule (.*) /yw-01/$1 [L]

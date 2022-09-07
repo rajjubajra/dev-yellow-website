@@ -1,0 +1,210 @@
+<?php
+
+/**
+ * @file
+ * Hooks and functions for the minifyjs module.
+ */
+
+use Drupal\Core\Asset\AttachedAssetsInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
+
+define('MINIFYJS_CACHE_CID', 'minifyjs:all_files');
+
+/**
+ * Implements hook_FORM_ID_alter().
+ */
+function minifyjs_form_system_performance_settings_alter(array &$form, FormStateInterface $form_state, $form_id) {
+  if (\Drupal::currentUser()->hasPermission('administer minifyjs')) {
+
+    // Determine the number of files minified.
+    $files = \Drupal::service('minifyjs')->loadAllFiles();
+    $files_minified = 0;
+    foreach ($files as $file) {
+      if (!empty($file->minified_uri)) {
+        $files_minified++;
+      }
+    }
+
+    $form['bandwidth_optimization']['use_minified_javascript'] = [
+      '#type'          => 'checkbox',
+      '#title'         => t('Use Minified JavaScript files.'),
+      '#disabled'      => ($files_minified) ? FALSE : TRUE,
+      '#description'   => t(
+        'Toggle minified javascript files on or off. There are @minified minified files out of @total total files available. <a href=":href">Click here to manage your javascript files</a>.',
+        [
+          '@minified' => $files_minified,
+          '@total'    => count($files),
+          ':href'     => Url::fromUri('base:/admin/config/development/performance/js')->toString(),
+        ]
+      ),
+      '#default_value' => \Drupal::config('minifyjs.config')->get('use_minified'),
+    ];
+
+    $form['#submit'][] = 'minifyjs_system_performance_settings_submit';
+  }
+}
+
+/**
+ * Helper function to handle submit hook in form alter.
+ *
+ * @param array $form
+ *   The form array.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The form state.
+ */
+function minifyjs_system_performance_settings_submit(array &$form, FormStateInterface $form_state) {
+  \Drupal::service('config.factory')->getEditable('minifyjs.config')
+    ->set('use_minified', $form_state->getValue('use_minified_javascript'))
+    ->save();
+}
+
+/**
+ * Implements hook_js_alter().
+ */
+function minifyjs_js_alter(array &$scripts, AttachedAssetsInterface $assets) {
+
+  // Determine if the replacement needs to be performed.
+  $do_replace = FALSE;
+  if (\Drupal::config('minifyjs.config')->get('use_minified')) {
+    if (\Drupal::config('minifyjs.config')->get('disable_admin')) {
+      if (!\Drupal::service('router.admin_context')->isAdminRoute()) {
+        $do_replace = TRUE;
+      }
+    }
+    else {
+      $do_replace = TRUE;
+    }
+  }
+
+  if ($do_replace) {
+
+    // Files array is keyed by file id. To make this operation as fast as
+    // possible, the array should be keyed by file uri. Also, shorten the
+    // array by removing files that are not minified.
+    $files = \Drupal::service('minifyjs')->loadAllFiles();
+    $minified_files = [];
+    foreach ($files as $file) {
+      if (!empty($file->minified_uri)) {
+        $minified_files[$file->uri] = $file;
+      }
+    }
+
+    // Update the scripts array with new file info.
+    foreach ($scripts as $path => $file) {
+      if (isset($minified_files[$path])) {
+        $scripts[$path]['data'] = $minified_files[$path]->minified_uri;
+        minifyjs_update_scripts($scripts, $path, $minified_files[$path]->minified_uri);
+      }
+    }
+  }
+}
+
+/**
+ * Update script.
+ *
+ * Helper function to change array key, without changing its order.
+ *
+ * @param array $scripts
+ *   The scripts that are attached to the page.
+ * @param string $existing
+ *   The existing file uri.
+ * @param string $new
+ *   The new file uri.
+ */
+function minifyjs_update_scripts(array &$scripts, $existing, $new) {
+  $keys = array_keys($scripts);
+  $index = array_search($existing, $keys, TRUE);
+  if ($index !== FALSE) {
+    $keys[$index] = $new;
+    $scripts = array_combine($keys, $scripts);
+  }
+}
+
+/**
+ * Batch - minify file operation.
+ *
+ * @param int $fid
+ *   The file id of the file to minify.
+ * @param array $context
+ *   The batch context.
+ */
+function minifyjs_batch_minify_file_operation($fid, array &$context) {
+
+  // Set the context message.
+  $files = \Drupal::service('minifyjs')->loadAllFiles();
+  $file = $files[$fid];
+  $context['message'] = t('Minifying file - %file', ['%file' => $file->uri]);
+
+  // Perform the minification.
+  $result = \Drupal::service('minifyjs')->minifyFile($fid);
+  if ($result === TRUE) {
+    isset($context['results']['success']) ? $context['results']['success']++ : $context['results']['success'] = 1;
+    $context['results']['operation'] = 'minify';
+  }
+  else {
+    $context['results']['errors'][] = $result;
+  }
+}
+
+/**
+ * Batch - remove minified file operation.
+ *
+ * @param int $fid
+ *   The file if of the file to remove.
+ * @param array $context
+ *   The batch context.
+ */
+function minifyjs_batch_remove_minified_file_operation($fid, array &$context) {
+
+  // Set the context message.
+  $files = \Drupal::service('minifyjs')->loadAllFiles();
+  $file = $files[$fid];
+  $context['message'] = t('Restoring un-minified file - %file', ['%file' => $file->uri]);
+
+  // Perform the restore.
+  $result = \Drupal::service('minifyjs')->removeMinifiedFile($fid);
+  if ($result === TRUE) {
+    isset($context['results']['success']) ? $context['results']['success']++ : $context['results']['success'] = 1;
+    $context['results']['operation'] = 'restore';
+  }
+  else {
+    $context['results']['errors'][] = $result;
+  }
+}
+
+/**
+ * Batch - finished.
+ *
+ * @param bool $success
+ *   Batch finished successfully or not.
+ * @param array $results
+ *   The results of the batch.
+ * @param array $operations
+ *   The operations remaining to run (only present if there was an error).
+ */
+function minifyjs_batch_finished($success, array $results, array $operations) {
+
+  // Output successful operations.
+  if (isset($results['success'])) {
+    if ($results['operation'] == 'minify') {
+      \Drupal::messenger()->addMessage(t('%count files were minified.', ['%count' => $results['success']]));
+    }
+    if ($results['operation'] == 'restore') {
+      \Drupal::messenger()->addMessage(t('%count files were restored.', ['%count' => $results['success']]));
+    }
+  }
+
+  // Output errors.
+  if (isset($results['errors'])) {
+    if (count($results['errors'])) {
+      foreach ($results['errors'] as $error) {
+        \Drupal::messenger()->addMessage($error, 'error');
+      }
+    }
+  }
+
+  // Clear the cache so this change will be reflected in
+  // \Drupal::service('minifyjs')->loadAllFiles().
+  \Drupal::cache()->delete(MINIFYJS_CACHE_CID);
+}

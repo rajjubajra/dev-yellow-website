@@ -1,0 +1,164 @@
+<div class="container mx-auto px-4">
+
+  <header role="banner">
+    {{ page.header }}
+  </header>
+
+  {{ page.primary_menu }}
+  {{ page.secondary_menu }}
+
+  
+  <main role="main">
+    <div class="w-full min-h-screen">
+      <h1 class="text-2xl">Profit and Loss Statement</h1>
+      <div class="flex flex-row text-xs uppercase">
+        <div class="p-1 m-1 w-28">Month</div>
+        <div class="p-1 m-1 w-24">Total Income</div>
+        <div class="p-1 m-1 w-24">Direct Cost 
+          <br /><span class="lowercase">[eg paid to copywriter]</span></div>
+        <div class="p-1 m-1 w-24">Promotion</div>
+        <div class="p-1 m-1 w-24">Office Expenses</div>
+        <div class="p-1 m-1 w-24">Assets Purchased</div>
+        <div class="p-1 m-1 w-24">Total Expenes</div>
+        <div class="p-1 m-1 w-24">Net Profit</div>
+      </div>
+      <div id="view-statement"></div>
+    </div>
+    
+
+
+  </main>
+
+  {% if page.footer %}
+    <footer role="contentinfo">
+      {{ page.footer }}
+    </footer>
+  {% endif %}
+
+</div>{# /.layout-container #}
+
+
+
+<script>
+
+  const dateFrom = '2014-04-6';
+  const dateTo = '2015-04-5';
+
+  window.onload = function(){
+    try{
+        getInvoices(dateFrom, dateTo);
+    }catch(err){
+      console.log("Error: URL parameter not found or", err );
+    }
+  }
+
+  const getInvoices = async (dateFrom, dateTo) => {
+
+    //console.log(dateFrom, dateTo);
+
+    const invoiceNew = [];
+    console.log("INVOICE NEW",invoiceNew);
+
+
+    /** FETCH - INVOICE NUMBER AND DATE **/  
+    const urlInv = `/d9-base/jsonapi/node/invoice?include=field_invoice_details`;
+    console.log(urlInv);
+
+    const response_invoice = await fetch(urlInv, {
+      method: "GET",
+      headers:{
+        Accept: 'application/vnd.api+json'
+      }
+    });
+    const invoices = await response_invoice.json();
+    //console.log("INVOICE LIST",invoices);
+  
+    invoices.data.forEach( (item) =>{
+      const {relationships:{field_invoice_details:{data}}} = item;
+      const {attributes:{field_old_invoice_date, field_old_invoice_number}} = item;
+      const newData = [];
+      data.map(item=> newData.push(item.id));
+      //console.log(data);
+      
+      invoices.included.map((inc)=>{
+        const {attributes:{field_description:{value}, field_quantity, field_rate}} = inc;
+        const year = new Date(field_old_invoice_date).getFullYear();
+        const month = new Date(field_old_invoice_date).getMonth();
+        if(newData.includes(inc.id)){
+          invoiceNew.push({year: year, month: month, date: field_old_invoice_date, num: field_old_invoice_number, desc: value, qty: field_quantity, rate: field_rate});
+        }
+      })
+    })
+
+    viewData(invoiceNew);
+
+
+  }
+
+
+
+  const monthName = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+
+  /** By month, sum of Invoice amount **/
+  const year = "2014_2015";
+
+  const inv_apr = [];
+  const inv_may = [];
+  const inv_jun = [];
+  const inv_jul = [];
+  const inv_aug = [];
+  const inv_sep = [];
+  const inv_oct = [];
+  const inv_nov = [];
+  const inv_dec = [];
+  const inv_jan = [];
+  const inv_feb = [];
+  const inv_mar = [];
+
+
+  const viewData = (data) =>{
+
+    
+    /** sort data by date **/
+    const data_sorted = data.sort((a, b) => {
+      return new Date(a.date).valueOf() - new Date(b.date).valueOf();
+    });
+
+
+    console.log("DATA SORTED",data_sorted);
+
+
+    data_sorted.map(item =>{
+      const qty = item.qty === null ? 1 : item.qty;
+      const amount = item.rate * qty;
+      if(item.month === 4){ inv_apr.push(amount)}
+      if(item.month === 5){ inv_may.push(amount)}
+      if(item.month === 6){ inv_jun.push(amount)}
+      if(item.month === 7){ inv_jul.push(amount)}
+      if(item.month === 8){ inv_aug.push(amount)}
+      if(item.month === 9){ inv_sep.push(amount)}
+      if(item.month === 10){ inv_oct.push(amount)}
+      if(item.month === 11){ inv_nov.push(amount)}
+      if(item.month === 12){ inv_dec.push(amount)}
+      if(item.month === 1){ inv_jan.push(amount)}
+      if(item.month === 2){ inv_feb.push(amount)}
+      if(item.month === 3){ inv_mar.push(amount)}
+      
+      let items = `<div class="flex flex-row text-xs">
+        <div class="p-1 m-1 w-28">${item.year} - ${monthName[item.month]}</div>
+        <div class="p-1 m-1 w-28">${item.year}</div>
+        
+      </div>`
+
+      return document.getElementById("view-statement").innerHTML += items;
+    })
+
+
+
+  }
+
+</script>
+
+
+
