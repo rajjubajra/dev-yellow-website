@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/react-apps/csvapp/static/css/main.905ec6ab.css",
-    "main.js": "/react-apps/csvapp/static/js/main.7225fbbc.js",
+    "main.js": "/react-apps/csvapp/static/js/main.708f2b4d.js",
     "index.html": "/react-apps/csvapp/index.html",
     "main.905ec6ab.css.map": "/react-apps/csvapp/static/css/main.905ec6ab.css.map",
-    "main.7225fbbc.js.map": "/react-apps/csvapp/static/js/main.7225fbbc.js.map"
+    "main.708f2b4d.js.map": "/react-apps/csvapp/static/js/main.708f2b4d.js.map"
   },
   "entrypoints": [
     "static/css/main.905ec6ab.css",
-    "static/js/main.7225fbbc.js"
+    "static/js/main.708f2b4d.js"
   ]
 }
