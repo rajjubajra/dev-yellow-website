@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/csvapp/static/css/main.905ec6ab.css",
+    "main.js": "/csvapp/static/js/main.a22a7ac5.js",
+    "index.html": "/csvapp/index.html",
+    "main.905ec6ab.css.map": "/csvapp/static/css/main.905ec6ab.css.map",
+    "main.a22a7ac5.js.map": "/csvapp/static/js/main.a22a7ac5.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.905ec6ab.css",
+    "static/js/main.a22a7ac5.js"
+  ]
+}
