@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/csvapp/static/css/main.cfaf9801.css",
-    "main.js": "/csvapp/static/js/main.b14f67a8.js",
+    "main.js": "/csvapp/static/js/main.ec65e60e.js",
     "index.html": "/csvapp/index.html",
     "main.cfaf9801.css.map": "/csvapp/static/css/main.cfaf9801.css.map",
-    "main.b14f67a8.js.map": "/csvapp/static/js/main.b14f67a8.js.map"
+    "main.ec65e60e.js.map": "/csvapp/static/js/main.ec65e60e.js.map"
   },
   "entrypoints": [
     "static/css/main.cfaf9801.css",
-    "static/js/main.b14f67a8.js"
+    "static/js/main.ec65e60e.js"
   ]
 }
