@@ -1,13 +1,25 @@
 {
   "files": {
-    "main.css": "/yw-account/static/css/main.7c04f5ff.css",
-    "main.js": "/yw-account/static/js/main.0960d128.js",
-    "index.html": "/yw-account/index.html",
-    "main.7c04f5ff.css.map": "/yw-account/static/css/main.7c04f5ff.css.map",
-    "main.0960d128.js.map": "/yw-account/static/js/main.0960d128.js.map"
+    "main.css": "/static/css/main.ec69a698.css",
+    "main.js": "/static/js/main.53ca6b24.js",
+    "static/media/profile-01.jpg": "/static/media/profile-01.69fd044f94578167bb41.jpg",
+    "static/media/profile-03.jpg": "/static/media/profile-03.93c3a84f3395c236a956.jpg",
+    "static/media/profile-08.jpg": "/static/media/profile-08.67af5aa02c1e924b2a89.jpg",
+    "static/media/client-pulseIt.jpg": "/static/media/client-pulseIt.c7d4a693a14a5306f768.jpg",
+    "static/media/profile-06.jpg": "/static/media/profile-06.feacff8eba785db01191.jpg",
+    "static/media/profile-04.jpg": "/static/media/profile-04.38d27ee687626e9fad45.jpg",
+    "static/media/profile-05.jpg": "/static/media/profile-05.c67c27cd1123b67bbcea.jpg",
+    "static/media/profile-07.jpg": "/static/media/profile-07.2a8d8c26ff3237535156.jpg",
+    "static/media/profile-10.jpg": "/static/media/profile-10.d77bd1e0d04d76b54d8a.jpg",
+    "static/media/profile-09.jpg": "/static/media/profile-09.ec1c622f5219020190d2.jpg",
+    "static/media/profile-02.jpg": "/static/media/profile-02.11751273a9e640a23601.jpg",
+    "static/media/yw-logo-horizontal.png": "/static/media/yw-logo-horizontal.b0d2bf88a6907bb2437a.png",
+    "index.html": "/index.html",
+    "main.ec69a698.css.map": "/static/css/main.ec69a698.css.map",
+    "main.53ca6b24.js.map": "/static/js/main.53ca6b24.js.map"
   },
   "entrypoints": [
-    "static/css/main.7c04f5ff.css",
-    "static/js/main.0960d128.js"
+    "static/css/main.ec69a698.css",
+    "static/js/main.53ca6b24.js"
   ]
 }
