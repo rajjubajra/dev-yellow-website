@@ -1,6 +1,6 @@
 {
-  "short_name": "Yellow Website",
-  "name": "Create websites",
+  "short_name": "React App",
+  "name": "Create React App Sample",
   "icons": [
     {
       "src": "favicon.ico",
@@ -8,18 +8,18 @@
       "type": "image/x-icon"
     },
     {
-      "src": "yw-logo-240x240.png",
+      "src": "logo192.png",
       "type": "image/png",
-      "sizes": "240x240"
+      "sizes": "192x192"
     },
     {
-      "src": "yw-logo-horizontal.png",
+      "src": "logo512.png",
       "type": "image/png",
       "sizes": "512x512"
     }
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#ffffff",
+  "theme_color": "#000000",
   "background_color": "#ffffff"
 }
