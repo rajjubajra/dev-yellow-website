@@ -1,0 +1,5 @@
+global-styling:
+  css:
+    base:
+      build/mycss.css: {}
+      build/tailwind.css: {}

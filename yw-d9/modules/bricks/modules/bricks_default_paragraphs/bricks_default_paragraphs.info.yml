@@ -1,0 +1,23 @@
+name: 'Bricks Default Paragraphs'
+description: 'Defaut setup for Bricks + Paragraphs.'
+package: Bricks
+type: module
+core: 8.x
+core_version_requirement: ^8 || ^9
+dependencies:
+  - bricks:bricks
+  - bricks:bricks_inline
+  - bricks:bricks_revisions
+  - drupal:field
+  - drupal:language
+  - drupal:menu_ui
+  - drupal:node
+  - paragraphs:paragraphs
+  - paragraphs:paragraphs_demo
+  - drupal:path
+  - drupal:user
+
+# Information added by Drupal.org packaging script on 2022-07-18
+version: '2.0.3'
+project: 'bricks'
+datestamp: 1658177890

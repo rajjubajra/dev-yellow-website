@@ -1,0 +1,14 @@
+name: 'CiviCRM Entity Leaflet'
+type: module
+description: 'Provides a Views style for Leaflet Maps that uses CiviCRM Address lon and lat'
+core_version_requirement: ^8.8 || ^9
+package: 'CiviCRM'
+
+dependencies:
+  - civicrm_entity:civicrm_entity
+  - leaflet:leaflet_views (>=2.0.0)
+
+# Information added by Drupal.org packaging script on 2022-05-18
+version: '8.x-3.3'
+project: 'civicrm_entity'
+datestamp: 1652906070

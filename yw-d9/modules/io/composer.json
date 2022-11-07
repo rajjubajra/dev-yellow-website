@@ -1,0 +1,33 @@
+{
+  "name": "drupal/io",
+  "description": "Integration with Intersection Observer API to lazyload blocks and Views.",
+  "keywords": ["Intersection Observer API", "AJAX", "Drupal"],
+  "type": "drupal-module",
+  "license": "GPL-2.0+",
+  "homepage": "https://drupal.org/project/io",
+  "authors": [
+    {
+      "name": "Gaus Surahman",
+      "homepage": "https://www.drupal.org/u/gausarts",
+      "role": "Maintainer"
+    },
+    {
+      "name": "Contributors",
+      "homepage": "https://www.drupal.org/node/3048387/committers",
+      "role": "Contributor"
+    }
+  ],
+  "support": {
+    "issues": "https://drupal.org/project/issues/io",
+    "source": "http://cgit.drupalcode.org/io"
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://git.drupal.org/project/io.git"
+    }
+  ],
+  "require": {
+    "drupal/blazy": "~2.0"
+  }
+}

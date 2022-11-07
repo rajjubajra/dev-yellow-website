@@ -1,0 +1,130 @@
+<div class="container mx-auto px-4">
+
+  <header role="banner">
+    {{ page.header }}
+  </header>
+
+  {{ page.primary_menu }}
+  {{ page.secondary_menu }}
+
+  
+  <main role="main">
+    <div class="w-full min-h-screen">
+      <h1 class="text-2xl">Account Statement</h1>
+      <div class="flex flex-row text-xs uppercase">
+        <div class="p-1 m-1 w-28">Date</div>
+        <div class="p-1 m-1 w-28">Year-Month</div>
+        <div class="p-1 m-1 w-72">Description</div>
+        <div class="p-1 m-1 w-24">Cost</div>
+        <div class="p-1 m-1 w-24">Cum Amount</div>
+      </div>
+      <div id="view-statement"></div>
+    </div>
+  </main>
+
+
+  {% if page.footer %}
+    <footer role="contentinfo">
+      {{ page.footer }}
+    </footer>
+  {% endif %}
+
+</div>{# /.layout-container #}
+
+
+
+
+<script>
+
+  window.onload = function(){
+    try{
+        getExpenses();
+    }catch(err){
+      console.log("Error: URL parameter not found or", err );
+    }
+  }
+
+  const getExpenses = async () => {
+
+    const expensesNew = [];
+   // console.log("INVOICE NEW", expensesNew);
+
+
+    /** FETCH - INVOICE NUMBER AND DATE **/  
+    const urlExp = `/d9-base/jsonapi/node/expenses?include=field_expense_details`;
+    //console.log(urlExp);
+
+    const response_expenses = await fetch(urlExp, {
+      method: "GET",
+      headers:{
+        Accept: 'application/vnd.api+json'
+      }
+    });
+    const expenses = await response_expenses.json();
+    //console.log("INVOICE LIST",expenses);
+  
+    
+    expenses.data.forEach( (item) =>{
+      const {relationships:{field_expense_details:{data}}} = item;
+      const {attributes:{field_expense_date},attributes:{drupal_internal_nid}} = item;
+
+      const newData = [];
+      data.map(item=> newData.push(item.id));
+      //console.log(data);
+      
+      expenses.included.map((inc)=>{
+        const {attributes:{field_descrtiption:{value}, field_cost}} = inc;
+        //if same id in "newData" array then push to "expenseNew" array
+        if(newData.includes(inc.id)){
+          expensesNew.push({date: field_expense_date, desc: value, cost: field_cost});
+        }
+      })
+    })
+
+    viewData(expensesNew);
+  
+  }
+
+
+  const viewData = (data) =>{
+    
+    /** sort data by date **/
+    const data_sorted = data.sort((a, b) => {
+      return new Date(a.date).valueOf() - new Date(b.date).valueOf();
+    });
+
+
+   // console.log("DATA SORTED",data_sorted);
+
+
+    /** for cumulative amount **/
+    const amtArr = [];
+
+
+    data_sorted.map(item =>{
+
+      //for cummulative cost
+      let amount = item.cost
+      amtArr.push(amount);
+      
+      //console.log("AMT ARR",amtArr);
+
+      let amount_cum = amtArr.reduce((accum, elem)=>{return accum + elem});
+      
+
+      let items = `<div class="flex flex-row text-xs">
+        <div class="p-1 m-1 w-28">${item.date}</div>
+        <div class="p-1 m-1 w-28">${item.date.substring(0,7)}</div>
+        <div class="p-1 m-1 w-72">${item.desc}</div>
+        <div class="p-1 m-1 w-24">${item.cost.toFixed(2)}</div>
+        <div class="p-1 m-1 w-24">${amount_cum.toFixed(2)}</div>
+      </div>`
+
+      return document.getElementById("view-statement").innerHTML += items;
+    })
+
+
+
+  }
+
+</script>

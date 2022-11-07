@@ -1,0 +1,44 @@
+<div class="container mx-auto px-4">
+
+  <header role="banner">
+    {{ page.header }}
+  </header>
+
+  {{ page.primary_menu }}
+  {{ page.secondary_menu }}
+
+  {{ page.breadcrumb }}
+
+  {{ page.highlighted }}
+
+  {{ page.help }}
+
+  <main role="main">
+    <a id="main-content" tabindex="-1"></a>{# link is in html.html.twig #}
+    <h1 class="text-2xl">Accounts:</h1>
+    <div class="md:flex -mx-4">
+      <div class="md:flex-1 p-4">
+        {{ page.content }}
+      </div>{# /.layout-content #}
+
+      {% if page.sidebar_first %}
+        <aside class="md:w-1/4 p-4" role="complementary">
+          {{ page.sidebar_first }}
+        </aside>
+      {% endif %}
+
+      {% if page.sidebar_second %}
+        <aside class="md:w-1/4" role="complementary">
+          {{ page.sidebar_second }}
+        </aside>
+      {% endif %}
+    </div>
+  </main>
+
+  {% if page.footer %}
+    <footer role="contentinfo">
+      {{ page.footer }}
+    </footer>
+  {% endif %}
+
+</div>{# /.layout-container #}

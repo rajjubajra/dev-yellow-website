@@ -1,0 +1,25 @@
+base:
+  css:
+    theme:
+      css/io.css: {}
+  js:
+    js/io.min.js: { minified: true }
+  dependencies:
+    # @todo when min D9.2 - core/once
+    - blazy/bio
+    - blazy/bio.ajax
+    - blazy/loading
+
+block:
+  js:
+    js/io.block.min.js: { minified: true }
+  dependencies:
+    - io/base
+
+pager:
+  version: VERSION
+  js:
+    js/io.pager.min.js : { minified: true }
+  dependencies:
+    - views/views.ajax
+    - io/base

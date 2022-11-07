@@ -1,0 +1,9 @@
+services:
+  io.manager:
+    class: Drupal\io\IoManager
+    arguments: ['@current_user', '@current_route_match', '@plugin.manager.block', '@blazy.manager']
+
+  io.event_subscriber:
+    class: Drupal\io\EventSubscriber\IoEventSubscriber
+    tags:
+      - { name: event_subscriber }

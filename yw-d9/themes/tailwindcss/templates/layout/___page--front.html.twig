@@ -1,0 +1,94 @@
+
+
+<div class="container mx-auto px-4">
+
+  <header role="banner">
+    {{ page.header }}
+  </header>
+  <div class="z-50">
+    {{ page.primary_menu }}
+    {{ page.secondary_menu }}
+  </div>
+  
+
+  {{ page.breadcrumb }}
+
+  {{ page.highlighted }}
+
+  {{ page.help }}
+
+  <main id="top"  role="main">
+
+    
+
+
+  {# {{ vardumper(page.content) }}  #}
+    
+    
+    <div  class="md:flex -mx-4">
+      <div class="md:flex-1 p-4">
+
+        {{ page.content.tailwindcss_content }}
+
+        
+        {# SCROLL DOWN INDICATOR #}
+      <div>
+        <div class="flex w-full items-center justify-center -mt-20">
+          <div id="arrow" class="animate-bounce w-6 h-6">
+          <a href="#watch">V</a>
+        </div>
+        </div>
+      </div>
+
+        <div id="watch" class="flex justify-center">
+          {{ page.content.webform }}
+          {{ page.content.webform_2 }}
+        </div>
+      
+      </div>{# /.layout-content #}
+
+
+
+
+
+      {% if page.sidebar_first %}
+        <aside class="md:w-1/4 p-4" role="complementary">
+          {{ page.sidebar_first }}
+        </aside>
+      {% endif %}
+
+      {% if page.sidebar_second %}
+        <aside class="md:w-1/4" role="complementary">
+          {{ page.sidebar_second }}
+        </aside>
+      {% endif %}
+
+
+    <div 
+    id="scroll-to-top"
+    class="fixed right-0 bottom-0">
+    <a
+    href="#top" 
+    class="w-8 h-8 border flex justify-center items-center rounded-full m-5 cursor-pointer">v</a></div>
+
+    </div>
+
+    
+  </main>
+
+  {% if page.footer %}
+    <footer role="contentinfo">
+      {{ page.footer }}
+    </footer>
+  {% endif %}
+
+</div>{# /.layout-container #}
+
+<div class="w-full h-screen flex justify-center items-center absolute top-0 z-0">
+  <div class="relative w-full max-w-lg">
+    <div class="my-blob absolute top-0 -left-4 w-40 h-40 bg-yellow-200 rounded-full mix-blend-multiply backdrop-filter opacity-25"></div>
+    <div class="my-blob absolute top-0 -right-4 w-56 h-56 bg-gray-300 rounded-full mix-blend-multiply opacity-50"></div>
+    <div class="my-blob absolute top-4 left-20 w-28 h-28 bg-red-500 rounded-full mix-blend-multiply opacity-40"></div>
+  </div>
+</div>
+

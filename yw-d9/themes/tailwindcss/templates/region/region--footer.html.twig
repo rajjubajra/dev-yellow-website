@@ -1,0 +1,29 @@
+{#
+/**
+ * @file
+ * Default theme implementation to display a region.
+ *
+ * Available variables:
+ * - content: The content for this region, typically blocks.
+ * - attributes: HTML attributes for the region <div>.
+ * - region: The name of the region variable as defined in the theme's
+ *   .info.yml file.
+ *
+ * @see template_preprocess_region()
+ *
+ * @ingroup themeable
+ */
+#}
+
+
+
+{% if content %}
+
+<div class="w-full flex justify-center">
+  <div{{ attributes.addClass('grid grid-flow-col auto-cols-max gap-2 font-thin tracking-wide text-xs') }}>
+    {{ content }}
+  </div>
+</div>
+{% endif %}
+
+

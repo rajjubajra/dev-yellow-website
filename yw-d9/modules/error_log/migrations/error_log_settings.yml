@@ -1,0 +1,22 @@
+id: error_log_settings
+label: Error Log settings
+migration_tags:
+  - Drupal 7
+  - Configuration
+source:
+  plugin: variable
+  variables:
+    - error_log_levels
+    - error_log_ignored_types
+  source_module: error_log
+process:
+  log_levels: error_log_levels
+  ignored_channels:
+    plugin: callback
+    callable:
+      - 'Drupal\error_log\Form\ErrorLogConfigForm'
+      - extractIgnoredChannels
+    source: error_log_ignored_types
+destination:
+  plugin: config
+  config_name: error_log.settings

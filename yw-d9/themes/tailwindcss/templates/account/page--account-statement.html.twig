@@ -1,0 +1,140 @@
+<div class="container mx-auto px-4">
+
+  <header role="banner">
+    {{ page.header }}
+  </header>
+
+  {{ page.primary_menu }}
+  {{ page.secondary_menu }}
+
+  
+  <main role="main">
+    <div class="w-full min-h-screen">
+      <h1 class="text-2xl">Account Statement</h1>
+      <div class="flex flex-row text-xs uppercase">
+        <div class="p-1 m-1 w-28">Date</div>
+        <div class="p-1 m-1 w-28">Year-Month</div>
+        <div class="p-1 m-1 w-24">Inv Number</div>
+        <div class="p-1 m-1 w-72">Description</div>
+        <div class="p-1 m-1 w-24">Quantity</div>
+        <div class="p-1 m-1 w-24">Rate</div>
+        <div class="p-1 m-1 w-24">Amount</div>
+        <div class="p-1 m-1 w-24">Cum Amount</div>
+      </div>
+      <div id="view-statement"></div>
+    </div>
+    
+
+
+  </main>
+
+  {% if page.footer %}
+    <footer role="contentinfo">
+      {{ page.footer }}
+    </footer>
+  {% endif %}
+
+</div>{# /.layout-container #}
+
+
+
+<script>
+
+  window.onload = function(){
+    try{
+        getInvoices();
+    }catch(err){
+      console.log("Error: URL parameter not found or", err );
+    }
+  }
+
+  const getInvoices = async () => {
+
+    const invoiceNew = [];
+    //console.log("INVOICE NEW",invoiceNew);
+
+
+    /** FETCH - INVOICE NUMBER AND DATE **/  
+    const urlInv = `/d9-base/jsonapi/node/invoice?include=field_invoice_details`;
+    //console.log(urlInv);
+
+    const response_invoice = await fetch(urlInv, {
+      method: "GET",
+      headers:{
+        Accept: 'application/vnd.api+json'
+      }
+    });
+    const invoices = await response_invoice.json();
+    //console.log("INVOICE LIST",invoices);
+  
+    invoices.data.forEach( (item) =>{
+      const {relationships:{field_invoice_details:{data}}} = item;
+      const {attributes:{field_old_invoice_date, field_old_invoice_number}} = item;
+      const newData = [];
+      data.map(item=> newData.push(item.id));
+      //console.log(data);
+      
+      invoices.included.map((inc)=>{
+        const {attributes:{field_description:{value}, field_quantity, field_rate}} = inc;
+        if(newData.includes(inc.id)){
+          invoiceNew.push({date: field_old_invoice_date, 
+            yearMonth: field_old_invoice_date.substring(0,7),
+            num: field_old_invoice_number, desc: value, qty: field_quantity, rate: field_rate});
+        }
+      })
+    })
+
+    viewData(invoiceNew);
+
+
+  }
+
+  const viewData = (data) =>{
+
+    
+    /** sort data by date **/
+    const data_sorted = data.sort((a, b) => {
+      return new Date(a.date).valueOf() - new Date(b.date).valueOf();
+    });
+
+
+   // console.log("DATA SORTED",data_sorted);
+
+
+    /** for cumulative amount **/
+    const amtArr = [];
+
+    data_sorted.map(item =>{
+    
+      
+      let qty = item.qty === null ? ' - ' : item.qty;
+      let amount = item.qty === null ? item.rate : item.qty * item.rate;
+
+      amtArr.push(amount);
+      
+      //console.log("AMT ARR",amtArr);
+
+      let amount_cum = amtArr.reduce((accum, elem)=>{return accum + elem});
+      
+      let items = `<div class="flex flex-row text-xs">
+        <div class="p-1 m-1 w-28">${item.date}</div>
+        <div class="p-1 m-1 w-28">${item.yearMonth}</div>
+        <div class="p-1 m-1 w-24">${item.num}</div>
+        <div class="p-1 m-1 w-72">${item.desc}</div>
+        <div class="p-1 m-1 w-24">${qty}</div>
+        <div class="p-1 m-1 w-24">${item.rate.toFixed(2)}</div>
+        <div class="p-1 m-1 w-24">${amount.toFixed(2)}</div>
+        <div class="p-1 m-1 w-24">${amount_cum.toFixed(2)}</div>
+      </div>`
+
+      return document.getElementById("view-statement").innerHTML += items;
+    })
+
+
+
+  }
+
+</script>
+
+
+

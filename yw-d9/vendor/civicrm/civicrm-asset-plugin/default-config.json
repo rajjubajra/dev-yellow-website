@@ -1,0 +1,32 @@
+{
+    "path": "civicrm-assets",
+    "url": "/civicrm-assets",
+    "file-mode": "auto",
+    "assets:*": {
+        "include": [
+            "**.html",
+            "**.js",
+            "**.css",
+            "**.svg",
+            "**.png",
+            "**.jpg",
+            "**.map",
+            "**.jpeg",
+            "**.ico",
+            "**.gif",
+            "**.woff",
+            "**.woff2",
+            "**.ttf",
+            "**.eot",
+            "**.swf"
+        ],
+        "exclude-dir": [
+            ".git",
+            ".svn",
+            ".bzr",
+            "/CRM",
+            "/Civi",
+            "/tests"
+        ]
+    }
+}

@@ -1,0 +1,27 @@
+services:
+  civicrm_entity.api:
+    class: 'Drupal\civicrm_entity\CiviCrmApi'
+    arguments: ['@civicrm']
+
+  civicrm_entity.field_definition_provider:
+    class: Drupal\civicrm_entity\Entity\FieldDefinitionProvider
+
+  entity.query.civicrm_entity:
+    class: '\Drupal\civicrm_entity\Entity\Query\CiviCRM\QueryFactory'
+    arguments: ['@civicrm_entity.api']
+    tags:
+      - { name: backend_overridable }
+
+  civicrm_entity.field_ui_route_subscriber:
+    class: Drupal\civicrm_entity\Routing\RouteSubscriber
+    arguments: [ '@entity_type.manager', '@module_handler' ]
+    tags:
+      - { name: event_subscriber }
+
+  civicrm_entity.module_installer:
+    class: Drupal\civicrm_entity\ModuleInstaller
+    decorates: module_installer
+    public: true
+    arguments: ['@civicrm_entity.module_installer.inner', '@app.root', '@module_handler', '@kernel']
+    tags:
+      - { name: service_collector, tag: 'module_install.uninstall_validator', call: addUninstallValidator }

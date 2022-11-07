@@ -1,0 +1,7 @@
+io.block:
+  path: '/io/block'
+  defaults:
+    _controller: '\Drupal\io\Controller\IoBlockController::load'
+  requirements:
+    # The access will be checked against each block.
+    _access: 'TRUE'

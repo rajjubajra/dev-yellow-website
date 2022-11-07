@@ -1,0 +1,78 @@
+{#
+<div{{ attributes }}>
+  {{ title_prefix }}
+  {% if label %}
+    <h2{{ title_attributes }}>{{ label }}</h2>
+  {% endif %}
+  {{ title_suffix }}
+  {% block content %}
+    {{ content }}
+  {% endblock %}
+</div>
+#}
+
+<div id="account-menu" class="flex flex-wrap"></div>
+
+
+<script>
+
+
+  
+
+  window.onload = function(){
+    try{
+        getAccountMenu();
+    }catch(err){
+      console.log("Error: URL parameter not found or", err );
+    }
+  }
+
+  const getAccountMenu = async () => {
+
+    const menuNew = [];
+    console.log("INVOICE NEW",menuNew);
+    const url = `/d9-base/jsonapi/menu_items/accountmenu`;
+
+    /** FETCH - ACCOUNT MENU **/  
+    const urlInv = url;
+    console.log(urlInv);
+
+    const response_menu = await fetch(urlInv, {
+      method: "GET",
+      headers:{
+        Accept: 'application/vnd.api+json'
+      }
+    });
+    const menu = await response_menu.json();
+    console.log("MENU LIST", menu);
+
+    viewMenu(menu.data);
+
+  }
+
+  const viewMenu = (menu) => {
+
+    console.log("menu in view",menu);
+    menu.length > 0 && 
+    menu.map(item=>{
+      const { attributes:{description}, attributes:{url} } = item;
+      
+      const menuItems = `
+      <a href="${url}" 
+        class="flex 
+        justify-center items-center 
+        h-32 w-32 m-2
+        border border-1 
+        text-xl text-center
+        hover:no-underline">
+        ${description}
+      </a>`
+
+      return document.getElementById("account-menu").innerHTML += menuItems;
+    })
+
+
+  }
+
+
+</script>

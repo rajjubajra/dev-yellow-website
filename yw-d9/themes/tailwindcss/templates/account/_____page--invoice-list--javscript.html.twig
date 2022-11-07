@@ -1,0 +1,70 @@
+<div class="container mx-auto px-4">
+
+  <header role="banner">
+    {{ page.header }}
+  </header>
+
+  {{ page.primary_menu }}
+  {{ page.secondary_menu }}
+
+  {{ page.breadcrumb }}
+
+  {{ page.highlighted }}
+
+  {{ page.help }}
+
+  <main role="main">
+    
+        <div class="flex flex-row flex-wrap" id="invoice-list"></div>        
+
+  </main>
+
+  {% if page.footer %}
+    <footer role="contentinfo">
+      {{ page.footer }}
+    </footer>
+  {% endif %}
+
+</div>{# /.layout-container #}
+
+
+<script>
+  window.onload = function(){
+    try{
+      const url = `/d9-base/jsonapi/node/invoice`;
+      invoiceList(url);
+    }catch(error){
+      console.log("Error:", error);
+    }
+  }
+
+  const invoiceList = async (url) => {
+    const response = await fetch(url,{
+      method: 'GET',
+      headers:{
+        Accept: 'application/vnd.api+json'
+      }
+    })    
+    const invoices = await response.json();
+    console.log(invoices);
+
+    invoices.data.map(item=>{
+      const {attributes:{field_old_invoice_number, field_old_invoice_date}} = item;
+      const items = `
+      <div class="w-40 h-40 p-3 border flex flex-col items-center justify-center p-2">
+          <div>${field_old_invoice_date}</div>
+          <div>${field_old_invoice_number}</div>
+          <div>
+            <a href="/d9-base/invoice-print?nid=${item.id}" target="_blank">Print</a>
+          </div>
+      </div>
+      `;
+
+      document.getElementById("invoice-list").innerHTML += items;
+
+    })
+    
+  }
+
+
+</script>
