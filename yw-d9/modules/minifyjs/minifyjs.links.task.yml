@@ -1,5 +1,0 @@
-minifyjs.manage:
-  title: Manage JavaScript Files
-  base_route: system.performance_settings
-  route_name: minifyjs.manage
-  weight: 2

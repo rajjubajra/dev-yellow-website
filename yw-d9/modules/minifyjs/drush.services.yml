@@ -1,6 +1,0 @@
-services:
-  minifyjs.commands:
-    class: Drupal\minifyjs\Commands\MinifyJsCommands
-    arguments: ['@minifyjs', '@cache.default']
-    tags:
-      - { name: drush.command }
