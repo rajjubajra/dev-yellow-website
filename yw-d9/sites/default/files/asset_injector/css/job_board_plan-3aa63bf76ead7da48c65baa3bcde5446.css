@@ -1,0 +1,11 @@
+.plan ul{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.plan ul li{
+  padding: 20px;
+  border: 1px solid #777;
+  width: 48%;
+  margin: 5px;
+}

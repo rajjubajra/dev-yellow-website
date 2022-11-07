@@ -1,0 +1,25 @@
+.field--name-field-media-oembed-video{
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  padding-top: 56.25%; /** 16.9 Aspect Ration (divide 9 by 16 = 0.5625) */
+}
+
+/* then style the iframe fo fit in the container div with full height and width 
+.media-oembed-content{
+  position: absolute;
+  top:0;
+  left: 0;
+  bottom:0;
+  right: 0;
+  width: 100%;
+  height: auto;
+}
+*/
+.node-18{ width: 100%; min-height: 100vh;  }
+.node-18 footer{ display: none; }
+
+.node-18 .node-content > :nth-child(1){
+  display: none;
+}
+.node-18 .node-content > :nth-child(2) > :first-child{ visibility: hidden; }

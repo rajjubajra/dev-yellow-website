@@ -1,0 +1,20 @@
+.btn-main-page ul li{
+  margin: 10px 10px;
+  width: 125px;
+  background: whitesmoke;
+  text-align: center;
+  padding: 4px;
+  border-bottom: 1px solid #c7c7c7;
+}
+
+.btn-main-page ul {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+
+.btn-main-page ul li a{
+    padding: 6px 5px;
+    font-weight: 300;
+}
