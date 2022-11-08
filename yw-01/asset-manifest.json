@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.aa285e65.css",
-    "main.js": "/static/js/main.cd6bf4bf.js",
+    "main.js": "/static/js/main.8efb0db6.js",
     "static/media/profile-01.jpg": "/static/media/profile-01.69fd044f94578167bb41.jpg",
     "static/media/profile-03.jpg": "/static/media/profile-03.93c3a84f3395c236a956.jpg",
     "static/media/profile-08.jpg": "/static/media/profile-08.67af5aa02c1e924b2a89.jpg",
@@ -16,10 +16,10 @@
     "static/media/yw-logo-horizontal.png": "/static/media/yw-logo-horizontal.b0d2bf88a6907bb2437a.png",
     "index.html": "/index.html",
     "main.aa285e65.css.map": "/static/css/main.aa285e65.css.map",
-    "main.cd6bf4bf.js.map": "/static/js/main.cd6bf4bf.js.map"
+    "main.8efb0db6.js.map": "/static/js/main.8efb0db6.js.map"
   },
   "entrypoints": [
     "static/css/main.aa285e65.css",
-    "static/js/main.cd6bf4bf.js"
+    "static/js/main.8efb0db6.js"
   ]
 }
